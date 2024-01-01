@@ -13,13 +13,18 @@ columns_for_map = [
     'annee_publication',
     'code_departement',
     'taux_de_logements_sociaux_en',
-    'taux_de_pauvrete_en',  # Ajouter d'autres colonnes si nécessaire
+    'taux_de_pauvrete_en',  
+    'nom_departement',
+    'nombre_d_habitants',
+    'nombre_de_logements',
 ]
 
 # Création d'un DataFrame spécifique aux colonnes de la carte
 map_data = data[columns_for_map].copy()
 map_data['annee_publication'] = map_data['annee_publication'].astype('Int64')
 map_data = map_data.dropna(subset=['annee_publication'])
+map_data['nombre_d_habitants'] = map_data['nombre_d_habitants'].astype('Int64')
+map_data['nombre_de_logements'] = map_data['nombre_de_logements'].astype('Int64')
 
 # Initialisation de l'application Dash
 app = Dash(__name__)
@@ -29,17 +34,16 @@ departement = requests.get(
     "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/departements.geojson"
 ).json()
 
-# Utilisation de dcc.Store pour stocker les données
+# Utilisation d'une variable globale pour stocker les données
+stored_data = map_data.to_dict('records')
+
 app.layout = html.Div([
     html.H1(children='Dashboard', style={'textAlign': 'center'}),
-
-    # Stockage uniquement du DataFrame spécifique aux colonnes de la carte
-    dcc.Store(id='data-store', data=map_data.to_dict('records')),
 
     # Utilisation de dcc.Loading pour afficher un spinner de chargement pendant la mise à jour du graphique
     dcc.Loading(
         id="loading",
-        type="circle",  # Autres options : "default", "circle", "dot"
+        type="default",  
         children=[
             # Affichage de la carte choroplèthe
             dcc.Graph(
@@ -63,8 +67,10 @@ app.layout = html.Div([
     dcc.Dropdown(
         id='filter-dropdown',
         options=[
-            {'label': 'Logements Sociaux', 'value': 'taux_de_logements_sociaux_en'},
-            {'label': 'Taux de Pauvreté', 'value': 'taux_de_pauvrete_en'},
+            {'label': 'Logements Sociaux (%)', 'value': 'taux_de_logements_sociaux_en'},
+            {'label': 'Taux de Pauvreté (%)', 'value': 'taux_de_pauvrete_en'},
+            {'label': 'Nombre d\'Habitants', 'value': 'nombre_d_habitants'},
+            {'label': 'Nombre de Logements', 'value': 'nombre_de_logements'},
         ],
         value='taux_de_logements_sociaux_en',  # Filtre par défaut
         style={'width': '50%', 'margin': 'auto'}
@@ -73,13 +79,13 @@ app.layout = html.Div([
 
 # Définition d'un rappel pour mettre à jour la carte et les données lorsque les valeurs des menus déroulants changent
 @app.callback(
-    [Output('carte', 'figure'),
-     Output('data-store', 'data')],
+    Output('carte', 'figure'),
     [Input('year-dropdown', 'value'),
-     Input('filter-dropdown', 'value'),
-     Input('data-store', 'data')]
+     Input('filter-dropdown', 'value')]
 )
-def update_map(selected_year, selected_filter, stored_data):
+def update_map(selected_year, selected_filter):
+    global stored_data  # Utilisation de la variable globale
+
     map_data = pd.DataFrame(stored_data)
 
     # Filtrer les données en fonction de l'année sélectionnée
@@ -91,18 +97,37 @@ def update_map(selected_year, selected_filter, stored_data):
         geojson=departement,
         locations="code_departement",
         featureidkey="properties.code",
-        color=selected_filter,  # Utilisation du filtre sélectionné
+        color=selected_filter,  
         color_continuous_scale="Plasma_r",
-        labels={selected_filter: f"{selected_filter} - Année {selected_year}", "code_departement": "Département"},
+        labels={
+            selected_filter: f"{selected_filter} ",
+            "code_departement": "Département ",
+            #"nom_departement": "Département",  
+            "nombre_d_habitants": "Nombre d'Habitants ",
+            "nombre_de_logements": "Nombre de Logements ",
+            "taux_de_logements_sociaux_en": "Taux de logements sociaux (%) ",
+            "taux_de_pauvrete_en": "Taux de pauvrete (%) ",
+        },
         basemap_visible=False,
         locationmode="geojson-id",
         projection="mercator",
     )
 
+    # Personnaliser les étiquettes de l'échelle de couleur
+    if selected_filter == 'nombre_de_logements':
+        fig.update_coloraxes(colorbar_title=f"Nombre de Logements - Année {selected_year}")
+    elif selected_filter == 'nombre_d_habitants':
+        fig.update_coloraxes(colorbar_title=f"Nombre d'Habitants - Année {selected_year} ")
+    elif selected_filter == 'taux_de_logements_sociaux_en':
+        fig.update_coloraxes(colorbar_title=f"Taux de logements sociaux (%) - Année {selected_year} ")
+    elif selected_filter == 'taux_de_pauvrete_en':
+        fig.update_coloraxes(colorbar_title=f"Taux de pauvrete en (%) - Année {selected_year} ")
+
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     fig.update_geos(fitbounds="locations", visible=False)
 
-    return fig, filtered_data.to_dict('records')
+
+    return fig
 
 # Exécute l'application si le script est lancé
 if __name__ == '__main__':
