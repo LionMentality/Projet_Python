@@ -40,41 +40,47 @@ stored_data = map_data.to_dict('records')
 app.layout = html.Div([
     html.H1(children='Dashboard', style={'textAlign': 'center'}),
 
-    # Utilisation de dcc.Loading pour afficher un spinner de chargement pendant la mise à jour du graphique
-    dcc.Loading(
-        id="loading",
-        type="default",  
-        children=[
-            # Affichage de la carte choroplèthe
-            dcc.Graph(
-                id="carte",
-                config={'scrollZoom': False, 'displayModeBar': False},
-            )
-        ]
-    ),
+    # Div englobante pour les filtres
+    html.Div([
+        # Menu déroulant pour sélectionner l'année
+        dcc.Dropdown(
+            id='year-dropdown',
+            options=[
+                {'label': str(int(year)), 'value': int(year)} for year in map_data['annee_publication'].unique()
+            ],
+            value=map_data['annee_publication'].max(),  # Année par défaut
+            style={'width': '45%', 'display': 'inline-block'}
+        ),
 
-    # Menu déroulant pour sélectionner l'année
-    dcc.Dropdown(
-        id='year-dropdown',
-        options=[
-            {'label': str(int(year)), 'value': int(year)} for year in map_data['annee_publication'].unique()
-        ],
-        value=map_data['annee_publication'].max(),  # Année par défaut
-        style={'width': '50%', 'margin': 'auto'}
-    ),
+        # Menu déroulant pour sélectionner le filtre (Logements Sociaux ou Taux de Pauvreté)
+        dcc.Dropdown(
+            id='filter-dropdown',
+            options=[
+                {'label': 'Logements Sociaux (%)', 'value': 'taux_de_logements_sociaux_en'},
+                {'label': 'Taux de Pauvreté (%)', 'value': 'taux_de_pauvrete_en'},
+                {'label': 'Nombre d\'Habitants', 'value': 'nombre_d_habitants'},
+                {'label': 'Nombre de Logements', 'value': 'nombre_de_logements'},
+            ],
+            value='taux_de_logements_sociaux_en',  # Filtre par défaut
+            style={'width': '45%', 'display': 'inline-block'}
+        ),
+    ], style={'textAlign': 'center', 'margin': 'auto', 'width': '90%'}),
 
-    # Menu déroulant pour sélectionner le filtre (Logements Sociaux ou Taux de Pauvreté)
-    dcc.Dropdown(
-        id='filter-dropdown',
-        options=[
-            {'label': 'Logements Sociaux (%)', 'value': 'taux_de_logements_sociaux_en'},
-            {'label': 'Taux de Pauvreté (%)', 'value': 'taux_de_pauvrete_en'},
-            {'label': 'Nombre d\'Habitants', 'value': 'nombre_d_habitants'},
-            {'label': 'Nombre de Logements', 'value': 'nombre_de_logements'},
-        ],
-        value='taux_de_logements_sociaux_en',  # Filtre par défaut
-        style={'width': '50%', 'margin': 'auto'}
-    )
+    # Div englobante pour la carte
+    html.Div([
+        # Affichage de la carte choroplèthe
+        dcc.Loading(
+            id="loading",
+            type="circle",
+            children=[
+                dcc.Graph(
+                    id="carte",
+                    config={'scrollZoom': False, 'displayModeBar': False},
+                )
+            ]
+        )
+    ], style={'width': '60%', 'margin': 'auto', 'border': '1px solid #ddd', 'padding': '10px', 'marginTop': '10px'}),
+
 ])
 
 # Définition d'un rappel pour mettre à jour la carte et les données lorsque les valeurs des menus déroulants changent
@@ -102,7 +108,6 @@ def update_map(selected_year, selected_filter):
         labels={
             selected_filter: f"{selected_filter} ",
             "code_departement": "Département ",
-            #"nom_departement": "Département",  
             "nombre_d_habitants": "Nombre d'Habitants ",
             "nombre_de_logements": "Nombre de Logements ",
             "taux_de_logements_sociaux_en": "Taux de logements sociaux (%) ",
@@ -125,7 +130,6 @@ def update_map(selected_year, selected_filter):
 
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     fig.update_geos(fitbounds="locations", visible=False)
-
 
     return fig
 
