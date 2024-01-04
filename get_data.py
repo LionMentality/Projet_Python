@@ -12,4 +12,5 @@ def read ():
 def read():
     url = "https://www.data.gouv.fr/fr/datasets/r/bf82e99f-cb74-48e6-b49f-9a0da726d5dc"
     df = pd.read_csv(url, sep=';')
-    return df
+    dftest = df[['annee_publication','code_departement']]
+    return dftest
