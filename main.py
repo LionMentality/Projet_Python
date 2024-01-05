@@ -65,54 +65,57 @@ app.layout = html.Div([
         id='histogramme-individuels',
         figure=px.histogram(
             df,
-            x='taux_de_logements_individuels_en',
-            y='taux_de_logements_vacants_en',
+            x='parc_social_taux_de_logements_individuels_en',
+            y='parc_social_nombre_de_logements',
             histfunc='avg',
             labels={
-                "taux_de_logements_individuels_en": "Taux de logements individuels ",
-                "taux_de_logements_vacants_en": "Taux de logements vacants ",
+                "parc_social_taux_de_logements_individuels_en": "Parc social : taux de logements individuels en % ",
+                "parc_social_nombre_de_logements": "Parc social : nombre de logements ",
             },
             color_discrete_sequence=['violet']
-            ).update_layout(
-                title='Histogramme du taux de logements individuels par taux de logements vacants depuis 2018',
-                xaxis_title='Taux de logements individuels (en %)',
-                yaxis_title='Taux de logements vacants (en %)'
-            ).update_traces(marker=dict(line=dict(color='black', width=1)))),
+        ).update_layout(
+            title='Histogramme du taux de logements individuels par nombre de logements des parcs sociaux depuis 2018',
+            xaxis_title='Parc social : taux de logements individuels (en %)',
+            yaxis_title='Parc social : nombre de logements'
+        ).update_traces(
+            marker=dict(line=dict(color='black', width=1))
+        ),
+    ),
 
     html.Label('Filtre par taux de logements individuels :'),
     dcc.RangeSlider(
         id='filter-slider-individuels',
-        min=df['taux_de_logements_individuels_en'].min(),
-        max=df['taux_de_logements_individuels_en'].max(),
-        value=[df['taux_de_logements_individuels_en'].min(), df['taux_de_logements_individuels_en'].max()],
+        min=df['parc_social_taux_de_logements_individuels_en'].min(),
+        max=df['parc_social_taux_de_logements_individuels_en'].max(),
+        value=[df['parc_social_taux_de_logements_individuels_en'].min(), df['parc_social_taux_de_logements_individuels_en'].max()],
         tooltip={'placement': 'bottom', 'always_visible': True},  # Afficher la valeur du slider
         pushable=1,  # Permettre de "pousser" l'autre poignée du slider
     ),
 
     dcc.Graph(
-        id = "histogramme-sociaux",
+        id = "histogramme-vacants",
         figure=px.histogram(
             df,
-            x='taux_de_logements_sociaux_en',
-            y='taux_de_logements_vacants_en',
+            x='parc_social_taux_de_logements_vacants_en',
+            y='parc_social_nombre_de_logements',
             histfunc='avg',
             labels={
-                "taux_de_logements_sociaux_en": "Taux de logements sociaux ",
-                "taux_de_logements_vacants_en": "Taux de logements vacants ",
+                "taux_de_logements_sociaux_en": "Parc social : taux de logements vacants en % ",
+                "parc_social_nombre_de_logements": "Parc social : nombre de logements ",
             },
             color_discrete_sequence=['skyblue']
             ).update_layout(
-                title='Histogramme du taux de logements sociaux par taux de logements vacants depuis 2018',
-                xaxis_title='Taux de logements sociaux (en %)',
-                yaxis_title='Taux de logements vacants (en %)'
+                title='Histogramme du taux de logements vacants par nombre de logements des parcs sociaux depuis 2018',
+                xaxis_title='Parc social : taux de logements vacants (en %)',
+                yaxis_title='Parc social : nombre de logements'
             ).update_traces(marker=dict(line=dict(color='black', width=1)))),
 
-    html.Label('Filtre par taux de logements sociaux :'),
+    html.Label('Filtre par taux de logements vacants :'),
     dcc.RangeSlider(
-        id='filter-slider-sociaux',
-        min=df['taux_de_logements_sociaux_en'].min(),
-        max=df['taux_de_logements_sociaux_en'].max(),
-        value=[df['taux_de_logements_sociaux_en'].min(), df['taux_de_logements_sociaux_en'].max()],
+        id='filter-slider-vacants',
+        min=df['parc_social_taux_de_logements_vacants_en'].min(),
+        max=df['parc_social_taux_de_logements_vacants_en'].max(),
+        value=[df['parc_social_taux_de_logements_vacants_en'].min(), df['parc_social_taux_de_logements_vacants_en'].max()],
         tooltip={'placement': 'bottom', 'always_visible': True},  # Afficher la valeur du slider
         pushable=1,  # Permettre de "pousser" l'autre poignée du slider
     ),
@@ -163,29 +166,29 @@ html.Div([
 
 # Définition d'un rappel pour mettre à jour l'histogramme lorsque les valeurs du slider changent
 @app.callback(
-    Output('histogramme-sociaux', 'figure'),
-    [Input('filter-slider-sociaux', 'value')],
+    Output('histogramme-vacants', 'figure'),
+    [Input('filter-slider-vacants', 'value')],
 )
 def update_histogram(filter_slider_values):
     filtered_data = df[
-        (df['taux_de_logements_sociaux_en'] >= filter_slider_values[0]) &
-        (df['taux_de_logements_sociaux_en'] <= filter_slider_values[1])
+        (df['parc_social_taux_de_logements_vacants_en'] >= filter_slider_values[0]) &
+        (df['parc_social_taux_de_logements_vacants_en'] <= filter_slider_values[1])
     ]
-    fig = px.histogram(
-        filtered_data,
-        x='taux_de_logements_sociaux_en',
-        y='taux_de_logements_vacants_en',
-        histfunc='avg',
-        labels={
-            "taux_de_logements_sociaux_en": "Taux de logements sociaux ",
-            "taux_de_logements_vacants_en": "Taux de logements vacants ",
-        },
-        color_discrete_sequence=['skyblue']
-    ).update_layout(
-        title='Histogramme du taux de logements sociaux par taux de logements vacants depuis 2018',
-        xaxis_title='Taux de logements sociaux (en %)',
-        yaxis_title='Taux de logements vacants (en %)'
-    ).update_traces(marker=dict(line=dict(color='black', width=1)))
+    fig=px.histogram(
+            df,
+            x='parc_social_taux_de_logements_vacants_en',
+            y='parc_social_nombre_de_logements',
+            histfunc='avg',
+            labels={
+                "taux_de_logements_sociaux_en": "Parc social : taux de logements vacants en % ",
+                "parc_social_nombre_de_logements": "Parc social : nombre de logements ",
+            },
+            color_discrete_sequence=['skyblue']
+            ).update_layout(
+                title='Histogramme du taux de logements vacants par nombre de logements des parcs sociaux depuis 2018',
+                xaxis_title='Parc social : taux de logements vacants (en %)',
+                yaxis_title='Parc social : nombre de logements'
+            ).update_traces(marker=dict(line=dict(color='black', width=1))),
 
     return fig
 
@@ -196,24 +199,24 @@ def update_histogram(filter_slider_values):
 )
 def update_histogram(filter_slider_values):
     filtered_data = df[
-        (df['taux_de_logements_individuels_en'] >= filter_slider_values[0]) &
-        (df['taux_de_logements_individuels_en'] <= filter_slider_values[1])
+        (df['parc_social_taux_de_logements_individuels_en'] >= filter_slider_values[0]) &
+        (df['parc_social_taux_de_logements_individuels_en'] <= filter_slider_values[1])
     ]
     fig = px.histogram(
-        filtered_data,
-        x='taux_de_logements_individuels_en',
-        y='taux_de_logements_vacants_en',
-        histfunc='avg',
-        labels={
-            "taux_de_logements_individuels_en": "Taux de logements sociaux ",
-            "taux_de_logements_vacants_en": "Taux de logements vacants ",
-        },
-        color_discrete_sequence=['skyblue']
-    ).update_layout(
-        title='Histogramme du taux de logements individuels par taux de logements vacants depuis 2018',
-        xaxis_title='Taux de logements individuels (en %)',
-        yaxis_title='Taux de logements vacants (en %)'
-    ).update_traces(marker=dict(line=dict(color='black', width=1)))
+            df,
+            x='parc_social_taux_de_logements_individuels_en',
+            y='parc_social_nombre_de_logements',
+            histfunc='avg',
+            labels={
+                "parc_social_taux_de_logements_individuels_en": "Parc social : taux de logements individuels en % ",
+                "parc_social_nombre_de_logements": "Parc social : nombre de logements ",
+            },
+            color_discrete_sequence=['violet']
+            ).update_layout(
+                title='Histogramme du taux de logements individuels par nombre de logements des parcs sociaux depuis 2018',
+                xaxis_title='Parc social : taux de logements individuels (en %)',
+                yaxis_title='Parc social : nombre de logements'
+            ).update_traces(marker=dict(line=dict(color='black', width=1))),
 
     return fig
 
