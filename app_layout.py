@@ -34,6 +34,7 @@ app.layout = html.Div(style={'backgroundColor': '#eefcff', 'textAlign' : 'center
 
     dcc.Graph(
         id='histogramme',
+        config={'scrollZoom': False, 'displayModeBar': False},
         figure=px.histogram(
             df,
             x='parc_social_loyer_moyen_en_eur_m2_mois',
@@ -71,6 +72,7 @@ app.layout = html.Div(style={'backgroundColor': '#eefcff', 'textAlign' : 'center
 
     dcc.Graph(
         id='graphique',
+        config={'scrollZoom': False, 'displayModeBar': False},
         figure=px.line(
             df, 
             x='annee_publication', 
