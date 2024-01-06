@@ -1,21 +1,26 @@
+# Importing necessary libraries 
 from imports import *
 from data import *
 
+# Creating a Dash application instance
 app = Dash(__name__)
 
 # App layout
 app.layout = html.Div(style={'backgroundColor': '#eefcff', 'textAlign' : 'center', 'margin-top': 0}, children=[
 
+    # Header 1 for the main title
     html.H1(
         children='Logements et Indicateurs Socio-Économiques depuis 2018',
         style={'textAlign': 'center', 'fontFamily': 'Cooper Black', 'fontSize': 28}
     ),
 
+    # Header 1 for the histogram title
     html.H1(
         children='Histogramme du loyer moyen et des logements mis en location par année',
         style={'textAlign': 'center', 'fontFamily': 'Cooper Black', 'fontSize': 20, 'margin-top': 50}
     ),
 
+    # Dropdown for selecting the year in the histogram
     dcc.Dropdown(
         id='year-dropdown-histogramme',
         options=[
@@ -32,6 +37,7 @@ app.layout = html.Div(style={'backgroundColor': '#eefcff', 'textAlign' : 'center
         }
     ),
 
+    # Histogram graph
     dcc.Graph(
         id='histogramme',
         config={'scrollZoom': False, 'displayModeBar': False},
@@ -50,11 +56,13 @@ app.layout = html.Div(style={'backgroundColor': '#eefcff', 'textAlign' : 'center
               'boxShadow': '0px 0px 10px 0px rgba(0,0,0,0.1)'}
     ),
 
+    # Header 1 for the population graph title
     html.H1(
         children='Graphique de l\'évolution du nombre d\'habitants par région',
         style={'textAlign': 'center', 'fontFamily': 'Cooper Black', 'fontSize': 20, 'margin-top': 50}
     ),
 
+    # Dropdown for selecting the region in the population graph
     dcc.Dropdown(
         id='filter-dropdown-graphique',
         options=[
@@ -70,6 +78,7 @@ app.layout = html.Div(style={'backgroundColor': '#eefcff', 'textAlign' : 'center
         }
     ),
 
+    # Population graph
     dcc.Graph(
         id='graphique',
         config={'scrollZoom': False, 'displayModeBar': False},
@@ -83,13 +92,14 @@ app.layout = html.Div(style={'backgroundColor': '#eefcff', 'textAlign' : 'center
               'boxShadow': '0px 0px 10px 0px rgba(0,0,0,0.1)'}
     ),
 
+    # Header 1 for the geographic visualization title
     html.H1(
         children='Visualisation géographique : Logements sociaux et indicateurs socio-économiques',
         style={'textAlign': 'center', 'fontFamily': 'Cooper Black', 'fontSize': 20, 'margin-top': 50}
     ),
 
+    # Dropdowns for selecting year and filter in the geographic visualization
     html.Div([
-
         dcc.Dropdown(
             id='year-dropdown',
             options=[
@@ -122,6 +132,7 @@ app.layout = html.Div(style={'backgroundColor': '#eefcff', 'textAlign' : 'center
         ),
     ], style={'textAlign': 'center', 'margin': 'auto', 'width': '90%', 'display': 'flex', 'justifyContent': 'space-between'}),
 
+    # Loading and map visualization
     html.Div([
         dcc.Loading(
             id="loading",
