@@ -73,9 +73,9 @@ Le jeu de données comprend des informations sur les logements, les indicateurs 
 
 L'analyse des tendances temporelles montre une croissance constante du nombre d'habitants dans certaines régions, tandis que d'autres connaissent des variations plus marquées.
 
-### Logements Sociaux
+### Parc sociaux
 
-Le taux de logements sociaux a-t-il augmenté ou diminué au fil des années? Quelles sont les régions qui montrent la plus grande variation?
+Concernant les parc sociaux, il a été mis en valeur le rapport entre le nombre de logements et le nombre de logements mis en location.
 
 ## Analyse Géographique
 
@@ -83,7 +83,7 @@ Le taux de logements sociaux a-t-il augmenté ou diminué au fil des années? Qu
 
 L'analyse géographique se concentre sur la visualisation des indicateurs socio-économiques à travers une carte interactive. Elle permet d'identifier les régions présentant des caractéristiques spécifiques.
 
-## Conclusions
+## Conclusion
 
 L'analyse des données met en évidence plusieurs tendances et schémas significatifs. Les principales conclusions comprennent :
 

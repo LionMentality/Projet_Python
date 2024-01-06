@@ -32,17 +32,20 @@ def update_histogramme(selected_year):
     
     figure=px.histogram(
             filtered_data,
-            x='parc_social_loyer_moyen_en_eur_m2_mois',
+            x='parc_social_nombre_de_logements',
             y='parc_social_logements_mis_en_location',
-            color_discrete_sequence=['orange']
+            color_discrete_sequence=['orange'],
+            labels={
+                'parc_social_nombre_de_logements': 'Parc social : nombre de logements ',
+                'parc_social_logements_mis_en_location': 'Parc social : nombre de logements mis en location '
+            }
         ).update_layout(
-            xaxis_title='Loyer mensuel (en euros / m² / mois)',
-            yaxis_title='Nombre de logements mis en location'
+            xaxis_title='Parc social : nombre de logements',
+            yaxis_title='Parc social : nombre de logements mis en location'
         ).update_traces(marker=dict(line=dict(color='black', width=1)))
 
     return figure
 
-# Définition d'un rappel pour mettre à jour la carte et les données lorsque les valeurs des menus déroulants changent
 @app.callback(
     Output('carte', 'figure'),
     [Input('year-dropdown', 'value'),
@@ -52,7 +55,6 @@ def update_histogramme(selected_year):
 def update_map(selected_year, selected_filter, stored_map_figure):
     map_data_filtered = map_data[map_data['annee_publication'] == selected_year]
 
-    # Mettre à jour la carte choroplèthe
     figure = px.choropleth(
         map_data_filtered,
         geojson=departement,
