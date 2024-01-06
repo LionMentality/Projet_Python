@@ -32,15 +32,15 @@ def update_histogramme(selected_year):
     
     figure=px.histogram(
             filtered_data,
-            x='parc_social_nombre_de_logements',
+            x='parc_social_loyer_moyen_en_eur_m2_mois',
             y='parc_social_logements_mis_en_location',
             color_discrete_sequence=['orange'],
             labels={
-                'parc_social_nombre_de_logements': 'Parc social : nombre de logements ',
+                'parc_social_loyer_moyen_en_eur_m2_mois': 'Parc social : loyer moyen ',
                 'parc_social_logements_mis_en_location': 'Parc social : nombre de logements mis en location '
             }
         ).update_layout(
-            xaxis_title='Parc social : nombre de logements',
+            xaxis_title='Parc social : loyer moyen (en euros / m² / mois)',
             yaxis_title='Parc social : nombre de logements mis en location'
         ).update_traces(marker=dict(line=dict(color='black', width=1)))
 
