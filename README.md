@@ -75,8 +75,6 @@ L'analyse des tendances temporelles montre une croissance constante du nombre d'
 
 ### Parc sociaux
 
-Concernant les parc sociaux, il a été mis en valeur le rapport entre le nombre de logements et le nombre de logements mis en location.
-
 ## Analyse Géographique
 
 ### Cartographie des Indicateurs Socio-Économiques
